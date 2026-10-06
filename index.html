@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APF MT Section Documents</title>
+    <style>
+        :root { --primary: #0056b3; --bg: #f0f2f5; }
+        body { font-family: 'Kalimati', 'Mangal', 'Arial', sans-serif; margin: 0; padding: 20px; background-color: var(--bg); }
+        .app-container { max-width: 1200px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: var(--primary); text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-top: 0; }
+        
+        fieldset { border: 1px solid #ccc; border-radius: 5px; margin-bottom: 20px; padding: 15px; }
+        legend { font-weight: bold; color: var(--primary); padding: 0 10px; }
+        
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        label { font-weight: bold; margin-bottom: 5px; font-size: 13px; color: #444; }
+        input[type="text"], input[type="number"], input[type="date"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        
+        table.entry-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table.entry-table th, table.entry-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        table.entry-table th { background-color: var(--primary); color: white; }
+        table.entry-table input { width: 90%; box-sizing: border-box; }
+        
+        .btn-group { display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+        .btn { padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; color: white; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .btn-add { background-color: #28a745; font-size: 14px; padding: 8px 15px; }
+        .btn-est { background-color: #17a2b8; }
+        .btn-maag { background-color: #fd7e14; }
+        .btn-sampanna { background-color: #6f42c1; }
+        .btn-print { background-color: #343a40; display: none; margin: 20px auto; font-size: 18px; }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* Print Views */
+        #print-container { display: none; background: white; }
+        .print-view { display: none; width: 210mm; min-height: 297mm; margin: 0 auto; font-family: 'Arial', sans-serif; background: white; padding: 20px; box-sizing: border-box; }
+        .print-view.active { display: block; }
+        
+        /* Print Styles strictly matching APF Photos */
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .no-print, .app-container { display: none !important; }
+            #print-container { display: block; }
+            .print-view { width: 100%; padding: 0; margin: 0; box-shadow: none; display: none; }
+            .print-view.active { display: block; }
+            
+            table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+            th, td { border: 1px solid #000; padding: 5px; text-align: left; }
+            .text-center { text-align: center; }
+            .text-right { text-align: right; }
+            
+            .header-text { text-align: center; margin-bottom: 15px; line-height: 1.3; }
+            .header-text h3, .header-text h4, .header-text h5 { margin: 2px 0; font-weight: normal; color: #000; }
+            .header-text h3 { font-weight: bold; font-size: 15px; text-decoration: underline; margin-top: 10px; }
+            .header-text h5 { font-size: 13px; font-weight: bold; }
+            
+            .meta-info { display: flex; justify-content: space-between; font-size: 12px; line-height: 1.5; margin-bottom: 5px; }
+            .signatures { display: flex; justify-content: space-between; margin-top: 40px; font-size: 12px; }
+            .sig-block { text-align: center; width: 30%; }
+            
+            .note-box { font-size: 11px; border: 1px solid #000; padding: 4px; margin-top: 5px; }
+            
+            /* Specific overrides for tables to match images exactly */
+            .table-est th { text-align: center; font-size: 11px; }
+            .table-maag th { text-align: center; font-size: 12px; }
+            .table-sam th { text-align: center; font-size: 11px; }
+            .v-align-top { vertical-align: top; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container no-print">
+        <h2>APF MT Section - Document Generator</h2>
+        
+        <fieldset>
+            <legend>सवारी साधनको विवरण (Vehicle Info)</legend>
+            <div class="form-grid">
+                <div class="form-group"><label>Vehicle No:</label><input type="text" id="v_no" value="BAGMATI B AA 5720"></div>
+                <div class="form-group"><label>User:</label><input type="text" id="v_user" value="Honorable Home Minister Escorts"></div>
+                <div class="form-group"><label>Vehicle Type:</label><input type="text" id="v_type" value="Mahindra Scorpio Pickup S10"></div>
+                <div class="form-group"><label>Current Mileage:</label><input type="text" id="v_mileage" value="66112"></div>
+                <div class="form-group"><label>Prev Servicing Mileage:</label><input type="text" id="v_prev_mil" value="65602"></div>
+                <div class="form-group"><label>Prev Servicing Date:</label><input type="text" id="v_prev_date" value="2083/01/15"></div>
+                <div class="form-group"><label>Date (मिति):</label><input type="text" id="v_date" value="2083/05/04"></div>
+                <div class="form-group"><label>आर्थिक वर्ष:</label><input type="text" id="v_fy" value="२०८३/०८४"></div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>मर्मत सम्बन्धी अन्य विवरण (For Maag & Sampanna)</legend>
+            <div class="form-grid">
+                <div class="form-group"><label>कार्यालय कोड नं.:</label><input type="text" id="o_code" value=""></div>
+                <div class="form-group"><label>माग नं.:</label><input type="text" id="maag_no" value=""></div>
+                <div class="form-group"><label>मर्मत आवेदन/आदेश फारम नं.:</label><input type="text" id="app_no" value=""></div>
+                <div class="form-group"><label>मर्मत गर्ने फर्मको नाम:</label><input type="text" id="firm_name" value="श्री मोटर ट्रेडिङ्ग कम्पनि प्रा.लि. काठमाण्डौं"></div>
+                <div class="form-group"><label>मर्मत आवेदन कर्ताको नाम:</label><input type="text" id="applicant" value=""></div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>प्राविधिक समिति / पदाधिकारीहरु (Technical Committee for Estimate)</legend>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>१. अध्यक्ष (Chairperson):</label>
+                    <input type="text" id="samiti_1" value="प्रा.स.प्र.नि ई. गणेश रावल">
+                </div>
+                <div class="form-group">
+                    <label>२. सदस्य (Member):</label>
+                    <input type="text" id="samiti_2" value="प्रा.स.प्र.स.ह बिर बहादुर तामाङ्ग">
+                </div>
+                <div class="form-group">
+                    <label>३. सदस्य (चालक) (Driver):</label>
+                    <input type="text" id="samiti_3" value="स.प्र.ब.ह लिला बहादुर राना (सवारी चालक)">
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>सामानहरुको विवरण (Particulars Entry)</legend>
+            <table class="entry-table" id="itemTable">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">S.N</th>
+                        <th style="width: 35%">Particulars (सामानको नाम)</th>
+                        <th style="width: 10%">Qty (परिमाण)</th>
+                        <th style="width: 10%">Unit (एकाइ)</th>
+                        <th style="width: 15%">Tender Rate</th>
+                        <th style="width: 15%">Approx Rate</th>
+                        <th style="width: 10%">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="entryBody">
+                    <tr>
+                        <td>1</td>
+                        <td><input type="text" class="i-desc" value="Tarpaulin for Load Deck (Pickup) (Windproof)"></td>
+                        <td><input type="number" class="i-qty" value="1"></td>
+                        <td><input type="text" class="i-unit" value="set"></td>
+                        <td><input type="number" class="i-trate" value="12000"></td>
+                        <td><input type="number" class="i-arate" value=""></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><input type="text" class="i-desc" value="Self Screw Bolt"></td>
+                        <td><input type="number" class="i-qty" value="100"></td>
+                        <td><input type="text" class="i-unit" value="pc"></td>
+                        <td><input type="number" class="i-trate" value=""></td>
+                        <td><input type="number" class="i-arate" value="10"></td>
+                        <td><button onclick="this.closest('tr').remove()" style="color:red; cursor:pointer;">✖</button></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><input type="text" class="i-desc" value="Poly Carbon Glass (8X6ft)"></td>
+                        <td><input type="number" class="i-qty" value="48"></td>
+                        <td><input type="text" class="i-unit" value="sq.ft"></td>
+                        <td><input type="number" class="i-trate" value=""></td>
+                        <td><input type="number" class="i-arate" value="300"></td>
+                        <td><button onclick="this.closest('tr').remove()" style="color:red; cursor:pointer;">✖</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-add" onclick="addRow()">+ थप सामान (Add Row)</button>
+        </fieldset>
+
+        <div class="btn-group">
+            <button class="btn btn-est" onclick="generateDoc('estimate')">📄 १. Estimate (अनुमान)</button>
+            <button class="btn btn-maag" onclick="generateDoc('maag')">📝 २. माग फारम (Maag Faram)</button>
+            <button class="btn btn-sampanna" onclick="generateDoc('sampanna')">✅ ३. मर्मत सम्पन्न (Marmat Sampanna)</button>
+        </div>
+    </div>
+
+    <!-- PRINT CONTAINER -->
+    <div id="print-container">
+        <div style="text-align:center; padding: 20px;" class="no-print">
+            <button class="btn btn-print" id="doPrintBtn" style="display:inline-block;" onclick="window.print()">🖨️ प्रिन्ट गर्नुहोस (Print)</button>
+            <button class="btn btn-print" id="backBtn" style="display:inline-block; background:#dc3545;" onclick="closePrint()">❌ पछाडि (Back)</button>
+        </div>
+
+        <!-- 1. ESTIMATE -->
+        <div id="tpl-estimate" class="print-view">
+            <div class="header-text">
+                <h5>Government of Nepal</h5>
+                <h5>MINISTRY OF HOME AFFAIRS</h5>
+                <h5>ARMED POLICE FORCE, NEPAL HEADQUARTERS</h5>
+                <h5>MT SECTION</h5>
+                <h3>Estimate</h3>
+            </div>
+            <div class="meta-info">
+                <div>
+                    Vehicle No: <span class="d-vno"></span><br>
+                    User: <span class="d-user"></span><br>
+                    Vehicle Type: <span class="d-vtype"></span>
+                </div>
+                <div class="text-right" style="text-align: left; padding-left: 150px;">
+                    Date: <span class="d-date"></span><br>
+                    Current Mileage : <span class="d-mileage"></span><br>
+                    Previous Servicing Mileage : <span class="d-pmil"></span><br>
+                    Previous Servicing Date : <span class="d-pdate"></span>
+                </div>
+            </div>
+            <table class="table-est">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width:4%">S.N</th>
+                        <th rowspan="2" style="width:38%">Particulars</th>
+                        <th rowspan="2" style="width:6%">QTY.</th>
+                        <th colspan="2">Rate</th>
+                        <th rowspan="2" style="width:12%">Amount</th>
+                        <th rowspan="2" style="width:10%">Remarks</th>
+                    </tr>
+                    <tr>
+                        <th style="width:12%">Tender Rate</th>
+                        <th style="width:12%">Approx.<br>Estimated Rate</th>
+                    </tr>
+                </thead>
+                <tbody id="est-body"></tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="text-right"><strong>Total</strong></td>
+                        <td id="est-total" class="text-right">0.00</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-right"><strong>Vat 13%</strong></td>
+                        <td id="est-vat" class="text-right">0.00</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-right"><strong>Grand Total</strong></td>
+                        <td id="est-gtotal" class="text-right"><strong>0.00</strong></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="note-box">Note:- This Estimation May Vary On Dismantling & Completion of Final Job.</div>
+            
+            <div class="signatures" style="margin-top: 50px; text-align:left;">
+                <div style="width: 50%; float:left;">
+                    <div style="border: 1px solid #000; display:inline-block; padding: 2px 10px; border-radius: 10px; margin-bottom: 5px;"><u>Estimated By</u></div><br>
+                    <u>प्राविधिक समितिका पदाधिकारीहरु :</u><br><br>
+                    <table style="width:100%; border:none; margin-top:10px; font-size:12px;">
+                        <tr><td style="border:none; padding:5px 0;">१</td><td style="border:none; padding:5px 0;" id="d-sam1"></td><td style="border:none; padding:5px 0;">: अध्यक्ष</td></tr>
+                        <tr><td style="border:none; padding:5px 0; padding-top:20px;">२</td><td style="border:none; padding:5px 0; padding-top:20px;" id="d-sam2"></td><td style="border:none; padding:5px 0; padding-top:20px;">: सदस्य</td></tr>
+                        <tr><td style="border:none; padding:5px 0; padding-top:20px;">३</td><td style="border:none; padding:5px 0; padding-top:20px;" id="d-sam3"></td><td style="border:none; padding:5px 0; padding-top:20px;">: सदस्य</td></tr>
+                    </table>
+                </div>
+                <div style="width: 50%; float:right; text-align:right;">
+                    <div style="border: 1px solid #000; display:inline-block; padding: 2px 10px; border-radius: 10px; margin-bottom: 5px;"><u>Verified By</u></div>
+                </div>
+                <div style="clear:both;"></div>
+            </div>
+        </div>
+
+        <!-- 2. MAAG FARAM -->
+        <div id="tpl-maag" class="print-view">
+            <div class="meta-info" style="margin-bottom:0;">
+                <div></div>
+                <div class="text-right">म.ले.प. फा.नं. ४०१</div>
+            </div>
+            <div class="header-text" style="margin-top:0;">
+                <h5>नेपाल सरकार</h5>
+                <h5>गृह मन्त्रालय</h5>
+                <h5>श्री सशस्त्र प्रहरी बल, नेपाल प्रधान कार्यालय मद्दती तथा सेवा निर्देशनालय</h5>
+                <h3>माग फारम</h3>
+            </div>
+            <div class="meta-info" style="margin-top:-10px;">
+                <div style="width:60%">
+                    सवारी साधन नं. : <span class="d-vno"></span><br>
+                    प्रयोगकर्ता : <span class="d-user"></span>
+                </div>
+                <div class="text-right" style="text-align:left;">
+                    आर्थिक वर्ष : <span class="d-fy"></span><br>
+                    माग नं. : <span class="d-maag"></span><br>
+                    मिति : <span class="d-date"></span>
+                </div>
+            </div>
+            <table class="table-maag">
+                <thead>
+                    <tr>
+                        <th style="width:5%">क्र.सं.</th>
+                        <th style="width:40%">सामानको नाम</th>
+                        <th style="width:15%">स्पेसिफिकेसन</th>
+                        <th style="width:10%">एकाइ</th>
+                        <th style="width:15%">माग गरिएको परिमाण</th>
+                        <th style="width:15%">कैफियत</th>
+                    </tr>
+                    <tr>
+                        <th>१</th><th>२</th><th>३</th><th>४</th><th>५</th><th>६</th>
+                    </tr>
+                </thead>
+                <tbody id="maag-body"></tbody>
+            </table>
+            
+            <div style="margin-top:40px; display:flex; justify-content:space-between; font-size:12px;">
+                <div class="sig-block text-left v-align-top">
+                    माग गर्ने:....<br><br>
+                    नाम: <span class="d-applicant"></span><br><br>
+                    पद: <br><br>
+                    मिति: <span class="d-date"></span><br><br>
+                    प्रयोजन:
+                </div>
+                <div class="sig-block text-left v-align-top">
+                    सिफारिस गर्ने:....<br><br>
+                    नाम:<br><br>
+                    पद:<br><br>
+                    मिति: <span class="d-date"></span>
+                </div>
+                <div class="sig-block text-left v-align-top">
+                    स्वीकृत गर्ने:....<br><br>
+                    नाम:<br><br>
+                    पद:<br><br>
+                    मिति: <span class="d-date"></span>
+                </div>
+            </div>
+            <div style="border: 1px solid #000; padding: 10px; margin-top: 30px; font-size: 12px; display:flex;">
+                <div style="width:50%">
+                    स्टोरकिपरले भर्ने<br>
+                    क) बजारबाट खरिद गर्नु पर्ने <span style="display:inline-block; width:15px; height:15px; border:1px solid #000; margin-left:5px;"></span><br>
+                    ख) मौज्दातमा रहेको <span style="display:inline-block; width:15px; height:15px; border:1px solid #000; margin-left:5px;"></span>
+                </div>
+                <div style="width:50%">
+                    <br>
+                    स्टोरकिपरको दस्तखत :...................<br>
+                    नाम:
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. SAMPANNA -->
+        <div id="tpl-sampanna" class="print-view">
+            <div class="meta-info" style="margin-bottom:0;">
+                <div></div>
+                <div class="text-right">म.ले.प. फारम नं. ४१४ क</div>
+            </div>
+            <div class="header-text" style="margin-top:0;">
+                <h5>नेपाल सरकार</h5>
+                <h5>गृह मन्त्रालय</h5>
+                <h5>श्री सशस्त्र प्रहरी बल नेपाल प्रधान कार्यालय मद्दती तथा सेवा निर्देशनालय</h5>
+                <h5>कार्यालय कोड नं. : <span class="d-ocode"></span></h5>
+                <h3>मर्मत सम्पन्न फारम</h3>
+            </div>
+            <div class="meta-info" style="margin-top:-10px;">
+                <div style="width:50%">
+                    सम्पत्तिको नाम: <span class="d-vtype"></span><br>
+                    पहिचान नं.: <span class="d-vno"></span><br>
+                    स्पेसिफिकेसन :<br>
+                    मोडल :
+                </div>
+                <div class="text-right" style="text-align:left;">
+                    आर्थिक वर्ष: <span class="d-fy"></span><br>
+                    मर्मत आवेदन तथा आदेश फारम नं.: <span class="d-appno"></span><br>
+                    मिति: <span class="d-date"></span><br>
+                    मर्मत गर्ने व्यक्ति वा फर्मको नाम : <span class="d-firm"></span><br>
+                    मर्मत आवेदन कर्ताको नाम: <span class="d-applicant"></span>
+                </div>
+            </div>
+            <table class="table-sam">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width:6%">मिति</th>
+                        <th colspan="5">मर्मत गर्दा फेरिएको विवरण</th>
+                        <th rowspan="2" style="width:8%">मर्मत गर्दाको अन्य खर्च रकम</th>
+                        <th rowspan="2" style="width:10%">जम्मा रकम (६+७)</th>
+                        <th rowspan="2" style="width:8%">मू.अ.कर रकम</th>
+                        <th rowspan="2" style="width:10%">जम्मा लागत (८+९)</th>
+                        <th rowspan="2" style="width:8%">कैफियत</th>
+                    </tr>
+                    <tr>
+                        <th style="width:25%">सामानको नाम</th>
+                        <th style="width:5%">एकाइ</th>
+                        <th style="width:5%">परिमाण</th>
+                        <th style="width:7%">दर</th>
+                        <th style="width:8%">जम्मा (४x५)</th>
+                    </tr>
+                    <tr>
+                        <th>१</th><th>२</th><th>३</th><th>४</th><th>५</th><th>६</th><th>७</th><th>८</th><th>९</th><th>१०</th><th>११</th>
+                    </tr>
+                </thead>
+                <tbody id="sam-body"></tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="text-right" style="font-weight:bold; padding-right:10px;">कुल जम्मा रकम :</td>
+                        <td id="sam-t6" class="text-right">0.00</td>
+                        <td></td>
+                        <td id="sam-t8" class="text-right">0.00</td>
+                        <td id="sam-t9" class="text-right">0.00</td>
+                        <td id="sam-t10" class="text-right" style="font-weight:bold;">0.00</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div style="margin-top:40px; display:flex; justify-content:space-between; font-size:12px;">
+                <div class="sig-block text-left">
+                    तयार गर्ने:....<br><br>
+                    नाम: <span id="d-sam-t1"></span><br><br>
+                    दर्जा: प्रा.स.प्र.नि<br><br>
+                    मिति: <span class="d-date"></span>
+                </div>
+                <div class="sig-block text-left">
+                    सिफारिस गर्ने:....<br><br>
+                    नाम:<br><br>
+                    दर्जा:<br><br>
+                    मिति: <span class="d-date"></span>
+                </div>
+                <div class="sig-block text-left">
+                    स्वीकृत गर्ने:....<br><br>
+                    नाम:<br><br>
+                    दर्जा:<br><br>
+                    मिति: <span class="d-date"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addRow() {
+            const tr = document.createElement('tr');
+            const sn = document.querySelectorAll('#entryBody tr').length + 1;
+            tr.innerHTML = `
+                <td>${sn}</td>
+                <td><input type="text" class="i-desc"></td>
+                <td><input type="number" class="i-qty"></td>
+                <td><input type="text" class="i-unit"></td>
+                <td><input type="number" class="i-trate"></td>
+                <td><input type="number" class="i-arate"></td>
+                <td><button onclick="this.closest('tr').remove()" style="color:red; cursor:pointer;">✖</button></td>
+            `;
+            document.getElementById('entryBody').appendChild(tr);
+        }
+
+        function getData() {
+            const items = [];
+            document.querySelectorAll('#entryBody tr').forEach(tr => {
+                const desc = tr.querySelector('.i-desc').value;
+                if(desc) {
+                    items.push({
+                        desc: desc,
+                        unit: tr.querySelector('.i-unit').value,
+                        qty: parseFloat(tr.querySelector('.i-qty').value) || 0,
+                        trate: tr.querySelector('.i-trate').value,
+                        arate: tr.querySelector('.i-arate').value
+                    });
+                }
+            });
+            return {
+                vno: document.getElementById('v_no').value,
+                user: document.getElementById('v_user').value,
+                vtype: document.getElementById('v_type').value,
+                mileage: document.getElementById('v_mileage').value,
+                pmil: document.getElementById('v_prev_mil').value,
+                pdate: document.getElementById('v_prev_date').value,
+                date: document.getElementById('v_date').value,
+                fy: document.getElementById('v_fy').value,
+                ocode: document.getElementById('o_code').value,
+                maag: document.getElementById('maag_no').value,
+                appno: document.getElementById('app_no').value,
+                firm: document.getElementById('firm_name').value,
+                applicant: document.getElementById('applicant').value,
+                sam1: document.getElementById('samiti_1').value,
+                sam2: document.getElementById('samiti_2').value,
+                sam3: document.getElementById('samiti_3').value,
+                items: items
+            };
+        }
+
+        function fillMeta(data) {
+            document.querySelectorAll('.d-vno').forEach(el => el.innerText = data.vno);
+            document.querySelectorAll('.d-user').forEach(el => el.innerText = data.user);
+            document.querySelectorAll('.d-vtype').forEach(el => el.innerText = data.vtype);
+            document.querySelectorAll('.d-mileage').forEach(el => el.innerText = data.mileage);
+            document.querySelectorAll('.d-pmil').forEach(el => el.innerText = data.pmil);
+            document.querySelectorAll('.d-pdate').forEach(el => el.innerText = data.pdate);
+            document.querySelectorAll('.d-date').forEach(el => el.innerText = data.date);
+            document.querySelectorAll('.d-fy').forEach(el => el.innerText = data.fy);
+            document.querySelectorAll('.d-ocode').forEach(el => el.innerText = data.ocode);
+            document.querySelectorAll('.d-maag').forEach(el => el.innerText = data.maag);
+            document.querySelectorAll('.d-appno').forEach(el => el.innerText = data.appno);
+            document.querySelectorAll('.d-firm').forEach(el => el.innerText = data.firm);
+            document.querySelectorAll('.d-applicant').forEach(el => el.innerText = data.applicant);
+            
+            document.getElementById('d-sam1').innerText = data.sam1;
+            document.getElementById('d-sam2').innerText = data.sam2;
+            document.getElementById('d-sam3').innerText = data.sam3;
+            document.getElementById('d-sam-t1').innerText = data.sam1.replace('प्रा.स.प्र.नि ', ''); // Auto extract name for sampanna
+        }
+
+        function generateDoc(type) {
+            const data = getData();
+            fillMeta(data);
+            
+            document.querySelector('.app-container').style.display = 'none';
+            document.getElementById('print-container').style.display = 'block';
+            document.querySelectorAll('.print-view').forEach(el => el.classList.remove('active'));
+            
+            let total = 0;
+            
+            if(type === 'estimate') {
+                document.getElementById('tpl-estimate').classList.add('active');
+                const tbody = document.getElementById('est-body');
+                tbody.innerHTML = '';
+                data.items.forEach((item, idx) => {
+                    const activeRate = parseFloat(item.trate) || parseFloat(item.arate) || 0;
+                    const amt = item.qty * activeRate;
+                    total += amt;
+                    
+                    const trateDisplay = item.trate ? parseFloat(item.trate).toFixed(2) : '';
+                    const arateDisplay = item.arate ? parseFloat(item.arate).toFixed(2) : '';
+                    
+                    tbody.innerHTML += `<tr>
+                        <td class="text-center">${idx+1}</td>
+                        <td>${item.desc}</td>
+                        <td class="text-center">${item.qty} ${item.unit}</td>
+                        <td class="text-right">${trateDisplay}</td>
+                        <td class="text-right">${arateDisplay}</td>
+                        <td class="text-right">${amt > 0 ? amt.toFixed(2) : ''}</td>
+                        <td></td>
+                    </tr>`;
+                });
+                document.getElementById('est-total').innerText = total.toFixed(2);
+                document.getElementById('est-vat').innerText = (total * 0.13).toFixed(2);
+                document.getElementById('est-gtotal').innerText = (total * 1.13).toFixed(2);
+            } 
+            else if (type === 'maag') {
+                document.getElementById('tpl-maag').classList.add('active');
+                const tbody = document.getElementById('maag-body');
+                tbody.innerHTML = '';
+                data.items.forEach((item, idx) => {
+                    tbody.innerHTML += `<tr>
+                        <td class="text-center">${idx+1}</td>
+                        <td>${item.desc}</td>
+                        <td></td>
+                        <td class="text-center">${item.unit}</td>
+                        <td class="text-center">${item.qty}</td>
+                        <td></td>
+                    </tr>`;
+                });
+                // Fill empty rows to make it look full like the real form
+                for(let i=data.items.length+1; i<=6; i++) {
+                     tbody.innerHTML += `<tr><td style="height:25px;"></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+                }
+            }
+            else if (type === 'sampanna') {
+                document.getElementById('tpl-sampanna').classList.add('active');
+                const tbody = document.getElementById('sam-body');
+                tbody.innerHTML = '';
+                data.items.forEach((item, idx) => {
+                    const activeRate = parseFloat(item.trate) || parseFloat(item.arate) || 0;
+                    const amt = item.qty * activeRate;
+                    total += amt;
+                    tbody.innerHTML += `<tr>
+                        <td class="text-center">${idx===0 ? data.date : ''}</td>
+                        <td>${item.desc}</td>
+                        <td class="text-center">${item.unit}</td>
+                        <td class="text-center">${item.qty}</td>
+                        <td class="text-right">${activeRate.toFixed(2)}</td>
+                        <td class="text-right">${amt.toFixed(2)}</td>
+                        <td></td>
+                        <td class="text-right">${amt.toFixed(2)}</td>
+                        <td class="text-right">${(amt * 0.13).toFixed(2)}</td>
+                        <td class="text-right">${(amt * 1.13).toFixed(2)}</td>
+                        <td></td>
+                    </tr>`;
+                });
+                 // Fill empty rows
+                for(let i=data.items.length+1; i<=6; i++) {
+                     tbody.innerHTML += `<tr><td style="height:25px;"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+                }
+                
+                document.getElementById('sam-t6').innerText = total.toFixed(2);
+                document.getElementById('sam-t8').innerText = total.toFixed(2);
+                document.getElementById('sam-t9').innerText = (total * 0.13).toFixed(2);
+                document.getElementById('sam-t10').innerText = (total * 1.13).toFixed(2);
+            }
+        }
+
+        function closePrint() {
+            document.querySelector('.app-container').style.display = 'block';
+            document.getElementById('print-container').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
