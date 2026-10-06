@@ -3,14 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APF MT Section Documents</title>
+    <title>APF MT Section Documents & Records</title>
     <style>
         :root { --primary: #0056b3; --bg: #f0f2f5; }
         body { font-family: 'Kalimati', 'Mangal', 'Arial', sans-serif; margin: 0; padding: 20px; background-color: var(--bg); }
         .app-container { max-width: 1200px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h2 { color: var(--primary); text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-top: 0; }
         
-        fieldset { border: 1px solid #ccc; border-radius: 5px; margin-bottom: 20px; padding: 15px; }
+        /* Tabs Styling */
+        .tab-nav { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; border-bottom: 2px solid #ccc; padding-bottom: 10px; }
+        .tab-btn { padding: 10px 25px; cursor: pointer; border: none; background: #e9ecef; font-weight: bold; font-size: 16px; border-radius: 5px 5px 0 0; color: #555; transition: 0.3s; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        fieldset { border: 1px solid #ccc; border-radius: 5px; margin-bottom: 20px; padding: 15px; background: #fdfdfd; }
         legend { font-weight: bold; color: var(--primary); padding: 0 10px; }
         
         .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
@@ -26,11 +34,15 @@
         .btn-group { display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
         .btn { padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; color: white; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .btn-add { background-color: #28a745; font-size: 14px; padding: 8px 15px; }
+        .btn-save { background-color: #20c997; }
         .btn-est { background-color: #17a2b8; }
         .btn-maag { background-color: #fd7e14; }
         .btn-sampanna { background-color: #6f42c1; }
         .btn-print { background-color: #343a40; display: none; margin: 20px auto; font-size: 18px; }
         .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .report-summary { display: flex; justify-content: space-around; background: #e2e3e5; padding: 20px; border-radius: 8px; margin-bottom: 20px; font-size: 18px; font-weight: bold; color: #383d41; border: 1px solid #d6d8db; }
+        .report-summary span { color: var(--primary); font-size: 22px; }
 
         /* Print Views */
         #print-container { display: none; background: white; }
@@ -61,7 +73,6 @@
             
             .note-box { font-size: 11px; border: 1px solid #000; padding: 4px; margin-top: 5px; }
             
-            /* Specific overrides for tables to match images exactly */
             .table-est th { text-align: center; font-size: 11px; }
             .table-maag th { text-align: center; font-size: 12px; }
             .table-sam th { text-align: center; font-size: 11px; }
@@ -71,107 +82,129 @@
 </head>
 <body>
 
-    <div class="app-container no-print">
-        <h2>APF MT Section - Document Generator</h2>
+    <div class="app-container no-print" id="main-ui">
+        <h2>APF MT Section - Document & Record Management System</h2>
         
-        <fieldset>
-            <legend>सवारी साधनको विवरण (Vehicle Info)</legend>
-            <div class="form-grid">
-                <div class="form-group"><label>Vehicle No:</label><input type="text" id="v_no" value="BAGMATI B AA 5720"></div>
-                <div class="form-group"><label>User:</label><input type="text" id="v_user" value="Honorable Home Minister Escorts"></div>
-                <div class="form-group"><label>Vehicle Type:</label><input type="text" id="v_type" value="Mahindra Scorpio Pickup S10"></div>
-                <div class="form-group"><label>Current Mileage:</label><input type="text" id="v_mileage" value="66112"></div>
-                <div class="form-group"><label>Prev Servicing Mileage:</label><input type="text" id="v_prev_mil" value="65602"></div>
-                <div class="form-group"><label>Prev Servicing Date:</label><input type="text" id="v_prev_date" value="2083/01/15"></div>
-                <div class="form-group"><label>Date (मिति):</label><input type="text" id="v_date" value="2083/05/04"></div>
-                <div class="form-group"><label>आर्थिक वर्ष:</label><input type="text" id="v_fy" value="२०८३/०८४"></div>
-            </div>
-        </fieldset>
+        <div class="tab-nav">
+            <button class="tab-btn active" id="btn-tab-new" onclick="switchTab('tab-new', this)">📝 मर्मत फारम (Job Entry)</button>
+            <button class="tab-btn" id="btn-tab-records" onclick="switchTab('tab-records', this)">📊 रेकर्ड र रिपोर्ट (Records & Reports)</button>
+        </div>
 
-        <fieldset>
-            <legend>मर्मत सम्बन्धी अन्य विवरण (For Maag & Sampanna)</legend>
-            <div class="form-grid">
-                <div class="form-group"><label>कार्यालय कोड नं.:</label><input type="text" id="o_code" value=""></div>
-                <div class="form-group"><label>माग नं.:</label><input type="text" id="maag_no" value=""></div>
-                <div class="form-group"><label>मर्मत आवेदन/आदेश फारम नं.:</label><input type="text" id="app_no" value=""></div>
-                <div class="form-group"><label>मर्मत गर्ने फर्मको नाम:</label><input type="text" id="firm_name" value="श्री मोटर ट्रेडिङ्ग कम्पनि प्रा.लि. काठमाण्डौं"></div>
-                <div class="form-group"><label>मर्मत आवेदन कर्ताको नाम:</label><input type="text" id="applicant" value=""></div>
-            </div>
-        </fieldset>
+        <!-- TAB 1: NEW ENTRY / DOCUMENT GENERATOR -->
+        <div id="tab-new" class="tab-content active">
+            <fieldset>
+                <legend>सवारी साधनको विवरण (Vehicle Info)</legend>
+                <input type="hidden" id="edit_id" value="">
+                <div class="form-grid">
+                    <div class="form-group"><label>Vehicle No:</label><input type="text" id="v_no" value="BAGMATI B AA 5720"></div>
+                    <div class="form-group"><label>User:</label><input type="text" id="v_user" value="Honorable Home Minister Escorts"></div>
+                    <div class="form-group"><label>Vehicle Type:</label><input type="text" id="v_type" value="Mahindra Scorpio Pickup S10"></div>
+                    <div class="form-group"><label>Current Mileage:</label><input type="text" id="v_mileage" value="66112"></div>
+                    <div class="form-group"><label>Prev Servicing Mileage:</label><input type="text" id="v_prev_mil" value="65602"></div>
+                    <div class="form-group"><label>Prev Servicing Date:</label><input type="text" id="v_prev_date" value="2083/01/15"></div>
+                    <div class="form-group"><label>Date (मिति):</label><input type="text" id="v_date" value="2083/05/04"></div>
+                    <div class="form-group"><label>आर्थिक वर्ष:</label><input type="text" id="v_fy" value="२०८३/०८४"></div>
+                </div>
+            </fieldset>
 
-        <fieldset>
-            <legend>प्राविधिक समिति / पदाधिकारीहरु (Technical Committee for Estimate)</legend>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>१. अध्यक्ष (Chairperson):</label>
-                    <input type="text" id="samiti_1" value="प्रा.स.प्र.नि ई. गणेश रावल">
+            <fieldset>
+                <legend>मर्मत सम्बन्धी अन्य विवरण (For Maag & Sampanna)</legend>
+                <div class="form-grid">
+                    <div class="form-group"><label>कार्यालय कोड नं.:</label><input type="text" id="o_code" value=""></div>
+                    <div class="form-group"><label>माग नं.:</label><input type="text" id="maag_no" value=""></div>
+                    <div class="form-group"><label>मर्मत आवेदन/आदेश फारम नं.:</label><input type="text" id="app_no" value=""></div>
+                    <div class="form-group"><label>मर्मत गर्ने फर्मको नाम:</label><input type="text" id="firm_name" value="श्री मोटर ट्रेडिङ्ग कम्पनि प्रा.लि. काठमाण्डौं"></div>
+                    <div class="form-group"><label>मर्मत आवेदन कर्ताको नाम:</label><input type="text" id="applicant" value=""></div>
                 </div>
-                <div class="form-group">
-                    <label>२. सदस्य (Member):</label>
-                    <input type="text" id="samiti_2" value="प्रा.स.प्र.स.ह बिर बहादुर तामाङ्ग">
-                </div>
-                <div class="form-group">
-                    <label>३. सदस्य (चालक) (Driver):</label>
-                    <input type="text" id="samiti_3" value="स.प्र.ब.ह लिला बहादुर राना (सवारी चालक)">
-                </div>
-            </div>
-        </fieldset>
+            </fieldset>
 
-        <fieldset>
-            <legend>सामानहरुको विवरण (Particulars Entry)</legend>
-            <table class="entry-table" id="itemTable">
+            <fieldset>
+                <legend>प्राविधिक समिति / पदाधिकारीहरु (Technical Committee for Estimate)</legend>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>१. अध्यक्ष (Chairperson):</label>
+                        <input type="text" id="samiti_1" value="प्रा.स.प्र.नि ई. गणेश रावल">
+                    </div>
+                    <div class="form-group">
+                        <label>२. सदस्य (Member):</label>
+                        <input type="text" id="samiti_2" value="प्रा.स.प्र.स.ह बिर बहादुर तामाङ्ग">
+                    </div>
+                    <div class="form-group">
+                        <label>३. सदस्य (चालक) (Driver):</label>
+                        <input type="text" id="samiti_3" value="स.प्र.ब.ह लिला बहादुर राना (सवारी चालक)">
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>सामानहरुको विवरण (Particulars Entry)</legend>
+                <table class="entry-table" id="itemTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%">S.N</th>
+                            <th style="width: 35%">Particulars (सामानको नाम)</th>
+                            <th style="width: 10%">Qty (परिमाण)</th>
+                            <th style="width: 10%">Unit (एकाइ)</th>
+                            <th style="width: 15%">Tender Rate</th>
+                            <th style="width: 15%">Approx Rate</th>
+                            <th style="width: 10%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="entryBody">
+                        <tr>
+                            <td>1</td>
+                            <td><input type="text" class="i-desc" value="Tarpaulin for Load Deck (Pickup) (Windproof)"></td>
+                            <td><input type="number" class="i-qty" value="1"></td>
+                            <td><input type="text" class="i-unit" value="set"></td>
+                            <td><input type="number" class="i-trate" value="12000"></td>
+                            <td><input type="number" class="i-arate" value=""></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn btn-add" onclick="addRow()">+ थप सामान (Add Row)</button>
+            </fieldset>
+
+            <div class="btn-group" style="background:#e9ecef; padding: 20px; border-radius: 8px;">
+                <button class="btn btn-save" onclick="saveRecord()">💾 सेभ गर्नुहोस (Save Job)</button>
+                <div style="border-left: 2px solid #ccc; margin: 0 10px;"></div>
+                <button class="btn btn-est" onclick="generateDoc('estimate')">📄 १. Estimate प्रिन्ट</button>
+                <button class="btn btn-maag" onclick="generateDoc('maag')">📝 २. माग फारम प्रिन्ट</button>
+                <button class="btn btn-sampanna" onclick="generateDoc('sampanna')">✅ ३. मर्मत सम्पन्न प्रिन्ट</button>
+            </div>
+        </div>
+
+        <!-- TAB 2: RECORDS & REPORTS -->
+        <div id="tab-records" class="tab-content">
+            <div class="report-summary">
+                <div>जम्मा मर्मत संख्या (Total Jobs): <br><span id="rep-count">0</span></div>
+                <div>कुल खर्च रकम (Total Expense with VAT): <br>रु <span id="rep-expense">0.00</span></div>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; margin-bottom: 10px; align-items:center;">
+                <h3 style="margin:0; color:var(--primary);">सुरक्षित रेकर्डहरु (Saved Records)</h3>
+                <button class="btn" style="background:#28a745; font-size:14px; padding: 8px 15px;" onclick="exportToCSV()">📥 Excel/CSV डाउनलोड</button>
+            </div>
+            
+            <table class="entry-table" id="recordsTable">
                 <thead>
                     <tr>
-                        <th style="width: 5%">S.N</th>
-                        <th style="width: 35%">Particulars (सामानको नाम)</th>
-                        <th style="width: 10%">Qty (परिमाण)</th>
-                        <th style="width: 10%">Unit (एकाइ)</th>
-                        <th style="width: 15%">Tender Rate</th>
-                        <th style="width: 15%">Approx Rate</th>
-                        <th style="width: 10%">Action</th>
+                        <th>मिति (Date)</th>
+                        <th>सवारी नं. (Vehicle No)</th>
+                        <th>आर्थिक वर्ष</th>
+                        <th>मर्मत गर्ने फर्म</th>
+                        <th>जम्मा लागत (Total Amount)</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
-                <tbody id="entryBody">
-                    <tr>
-                        <td>1</td>
-                        <td><input type="text" class="i-desc" value="Tarpaulin for Load Deck (Pickup) (Windproof)"></td>
-                        <td><input type="number" class="i-qty" value="1"></td>
-                        <td><input type="text" class="i-unit" value="set"></td>
-                        <td><input type="number" class="i-trate" value="12000"></td>
-                        <td><input type="number" class="i-arate" value=""></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td><input type="text" class="i-desc" value="Self Screw Bolt"></td>
-                        <td><input type="number" class="i-qty" value="100"></td>
-                        <td><input type="text" class="i-unit" value="pc"></td>
-                        <td><input type="number" class="i-trate" value=""></td>
-                        <td><input type="number" class="i-arate" value="10"></td>
-                        <td><button onclick="this.closest('tr').remove()" style="color:red; cursor:pointer;">✖</button></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td><input type="text" class="i-desc" value="Poly Carbon Glass (8X6ft)"></td>
-                        <td><input type="number" class="i-qty" value="48"></td>
-                        <td><input type="text" class="i-unit" value="sq.ft"></td>
-                        <td><input type="number" class="i-trate" value=""></td>
-                        <td><input type="number" class="i-arate" value="300"></td>
-                        <td><button onclick="this.closest('tr').remove()" style="color:red; cursor:pointer;">✖</button></td>
-                    </tr>
+                <tbody id="recordsBody">
+                    <!-- Records will be loaded here -->
                 </tbody>
             </table>
-            <button class="btn btn-add" onclick="addRow()">+ थप सामान (Add Row)</button>
-        </fieldset>
-
-        <div class="btn-group">
-            <button class="btn btn-est" onclick="generateDoc('estimate')">📄 १. Estimate (अनुमान)</button>
-            <button class="btn btn-maag" onclick="generateDoc('maag')">📝 २. माग फारम (Maag Faram)</button>
-            <button class="btn btn-sampanna" onclick="generateDoc('sampanna')">✅ ३. मर्मत सम्पन्न (Marmat Sampanna)</button>
         </div>
     </div>
 
-    <!-- PRINT CONTAINER -->
+    <!-- PRINT CONTAINER (Same as before) -->
     <div id="print-container">
         <div style="text-align:center; padding: 20px;" class="no-print">
             <button class="btn btn-print" id="doPrintBtn" style="display:inline-block;" onclick="window.print()">🖨️ प्रिन्ट गर्नुहोस (Print)</button>
@@ -414,7 +447,22 @@
         </div>
     </div>
 
+    <!-- MAIN JAVASCRIPT -->
     <script>
+        // TABS LOGIC
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            if(btnElement) btnElement.classList.add('active');
+            
+            if(tabId === 'tab-records') {
+                loadRecords();
+            }
+        }
+
+        // ENTRY LOGIC
         function addRow() {
             const tr = document.createElement('tr');
             const sn = document.querySelectorAll('#entryBody tr').length + 1;
@@ -425,26 +473,34 @@
                 <td><input type="text" class="i-unit"></td>
                 <td><input type="number" class="i-trate"></td>
                 <td><input type="number" class="i-arate"></td>
-                <td><button onclick="this.closest('tr').remove()" style="color:red; cursor:pointer;">✖</button></td>
+                <td><button onclick="this.closest('tr').remove()" style="color:red; background:none; border:none; font-size:18px; cursor:pointer;">✖</button></td>
             `;
             document.getElementById('entryBody').appendChild(tr);
         }
 
         function getData() {
             const items = [];
+            let totalWithoutVat = 0;
+
             document.querySelectorAll('#entryBody tr').forEach(tr => {
                 const desc = tr.querySelector('.i-desc').value;
                 if(desc) {
+                    const qty = parseFloat(tr.querySelector('.i-qty').value) || 0;
+                    const trate = tr.querySelector('.i-trate').value;
+                    const arate = tr.querySelector('.i-arate').value;
+                    const activeRate = parseFloat(trate) || parseFloat(arate) || 0;
+                    
+                    totalWithoutVat += (qty * activeRate);
+
                     items.push({
-                        desc: desc,
-                        unit: tr.querySelector('.i-unit').value,
-                        qty: parseFloat(tr.querySelector('.i-qty').value) || 0,
-                        trate: tr.querySelector('.i-trate').value,
-                        arate: tr.querySelector('.i-arate').value
+                        desc: desc, unit: tr.querySelector('.i-unit').value,
+                        qty: qty, trate: trate, arate: arate
                     });
                 }
             });
+
             return {
+                id: document.getElementById('edit_id').value || Date.now().toString(),
                 vno: document.getElementById('v_no').value,
                 user: document.getElementById('v_user').value,
                 vtype: document.getElementById('v_type').value,
@@ -461,10 +517,157 @@
                 sam1: document.getElementById('samiti_1').value,
                 sam2: document.getElementById('samiti_2').value,
                 sam3: document.getElementById('samiti_3').value,
-                items: items
+                items: items,
+                total_amount: totalWithoutVat * 1.13 // Grand Total with VAT
             };
         }
 
+        // SAVE & RECORDS LOGIC (Using LocalStorage)
+        function saveRecord() {
+            const data = getData();
+            if(data.items.length === 0) {
+                alert("कृपया सामानको विवरण भर्नुहोस्! (Please add items)");
+                return;
+            }
+
+            let records = JSON.parse(localStorage.getItem('apf_records') || '[]');
+            
+            // Check if updating existing or adding new
+            const existingIndex = records.findIndex(r => r.id === data.id);
+            if(existingIndex > -1) {
+                records[existingIndex] = data;
+            } else {
+                records.push(data);
+            }
+
+            localStorage.setItem('apf_records', JSON.stringify(records));
+            document.getElementById('edit_id').value = ''; // clear edit mode
+            alert('रेकर्ड सफलता पुर्वक सुरक्षित भयो! (Record Saved Successfully)');
+            
+            // Automatically switch to records tab to see it
+            switchTab('tab-records', document.getElementById('btn-tab-records'));
+        }
+
+        function loadRecords() {
+            let records = JSON.parse(localStorage.getItem('apf_records') || '[]');
+            const tbody = document.getElementById('recordsBody');
+            tbody.innerHTML = '';
+            
+            let totalExpense = 0;
+            
+            // Sort by newest first
+            records.reverse().forEach((rec) => {
+                totalExpense += parseFloat(rec.total_amount) || 0;
+                
+                tbody.innerHTML += `<tr>
+                    <td>${rec.date}</td>
+                    <td><b>${rec.vno}</b></td>
+                    <td>${rec.fy}</td>
+                    <td>${rec.firm || '-'}</td>
+                    <td class="text-right" style="color:var(--primary); font-weight:bold;">रु ${(parseFloat(rec.total_amount)||0).toFixed(2)}</td>
+                    <td>
+                        <button onclick="viewRecord('${rec.id}')" style="background:#007bff; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer;">खोल्नुहोस् (Open)</button>
+                        <button onclick="deleteRecord('${rec.id}')" style="background:#dc3545; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer; margin-left:5px;">मेट्नुहोस् (Del)</button>
+                    </td>
+                </tr>`;
+            });
+            
+            document.getElementById('rep-count').innerText = records.length;
+            document.getElementById('rep-expense').innerText = totalExpense.toFixed(2);
+        }
+
+        function deleteRecord(id) {
+            if(confirm('के तपाई यो रेकर्ड मेट्न निश्चित हुनुहुन्छ? (Are you sure you want to delete this record?)')) {
+                let records = JSON.parse(localStorage.getItem('apf_records') || '[]');
+                records = records.filter(r => r.id !== id);
+                localStorage.setItem('apf_records', JSON.stringify(records));
+                loadRecords();
+            }
+        }
+
+        function viewRecord(id) {
+            let records = JSON.parse(localStorage.getItem('apf_records') || '[]');
+            let rec = records.find(r => r.id === id);
+            
+            if(rec) {
+                document.getElementById('edit_id').value = rec.id;
+                document.getElementById('v_no').value = rec.vno || '';
+                document.getElementById('v_user').value = rec.user || '';
+                document.getElementById('v_type').value = rec.vtype || '';
+                document.getElementById('v_mileage').value = rec.mileage || '';
+                document.getElementById('v_prev_mil').value = rec.pmil || '';
+                document.getElementById('v_prev_date').value = rec.pdate || '';
+                document.getElementById('v_date').value = rec.date || '';
+                document.getElementById('v_fy').value = rec.fy || '';
+                document.getElementById('o_code').value = rec.ocode || '';
+                document.getElementById('maag_no').value = rec.maag || '';
+                document.getElementById('app_no').value = rec.appno || '';
+                document.getElementById('firm_name').value = rec.firm || '';
+                document.getElementById('applicant').value = rec.applicant || '';
+                document.getElementById('samiti_1').value = rec.sam1 || '';
+                document.getElementById('samiti_2').value = rec.sam2 || '';
+                document.getElementById('samiti_3').value = rec.sam3 || '';
+                
+                // Clear and load items
+                const tbody = document.getElementById('entryBody');
+                tbody.innerHTML = '';
+                
+                if(rec.items && rec.items.length > 0) {
+                    rec.items.forEach((item, idx) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${idx+1}</td>
+                            <td><input type="text" class="i-desc" value="${item.desc}"></td>
+                            <td><input type="number" class="i-qty" value="${item.qty}"></td>
+                            <td><input type="text" class="i-unit" value="${item.unit}"></td>
+                            <td><input type="number" class="i-trate" value="${item.trate}"></td>
+                            <td><input type="number" class="i-arate" value="${item.arate}"></td>
+                            <td><button onclick="this.closest('tr').remove()" style="color:red; background:none; border:none; font-size:18px; cursor:pointer;">✖</button></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    addRow(); // add blank row if empty
+                }
+                
+                // Switch to form tab
+                switchTab('tab-new', document.getElementById('btn-tab-new'));
+            }
+        }
+
+        function exportToCSV() {
+            let records = JSON.parse(localStorage.getItem('apf_records') || '[]');
+            if(records.length === 0) {
+                alert("कुनै रेकर्ड फेला परेन! (No records to export)");
+                return;
+            }
+
+            // CSV Header
+            let csvContent = "data:text/csv;charset=utf-8,\\uFEFF"; // BOM for UTF-8 support (Nepali characters)
+            csvContent += "Date,Vehicle No,Vehicle Type,Fiscal Year,Firm Name,Total Amount (with VAT)\\n";
+            
+            records.forEach(function(rec) {
+                let row = [
+                    rec.date, 
+                    rec.vno, 
+                    rec.vtype, 
+                    rec.fy, 
+                    `"${rec.firm || ''}"`, // Quotes to handle commas in firm name
+                    (parseFloat(rec.total_amount) || 0).toFixed(2)
+                ];
+                csvContent += row.join(",") + "\\n";
+            });
+            
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "APF_MT_Repair_Report.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // DOCUMENT GENERATION & PRINT LOGIC
         function fillMeta(data) {
             document.querySelectorAll('.d-vno').forEach(el => el.innerText = data.vno);
             document.querySelectorAll('.d-user').forEach(el => el.innerText = data.user);
@@ -483,11 +686,16 @@
             document.getElementById('d-sam1').innerText = data.sam1;
             document.getElementById('d-sam2').innerText = data.sam2;
             document.getElementById('d-sam3').innerText = data.sam3;
-            document.getElementById('d-sam-t1').innerText = data.sam1.replace('प्रा.स.प्र.नि ', ''); // Auto extract name for sampanna
+            document.getElementById('d-sam-t1').innerText = data.sam1.replace('प्रा.स.प्र.नि ', ''); 
         }
 
         function generateDoc(type) {
             const data = getData();
+            if(data.items.length === 0) {
+                alert("प्रिन्ट गर्नको लागि कृपया सामानको विवरण भर्नुहोस्!");
+                return;
+            }
+
             fillMeta(data);
             
             document.querySelector('.app-container').style.display = 'none';
@@ -536,7 +744,6 @@
                         <td></td>
                     </tr>`;
                 });
-                // Fill empty rows to make it look full like the real form
                 for(let i=data.items.length+1; i<=6; i++) {
                      tbody.innerHTML += `<tr><td style="height:25px;"></td><td></td><td></td><td></td><td></td><td></td></tr>`;
                 }
@@ -563,7 +770,6 @@
                         <td></td>
                     </tr>`;
                 });
-                 // Fill empty rows
                 for(let i=data.items.length+1; i<=6; i++) {
                      tbody.innerHTML += `<tr><td style="height:25px;"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
                 }
@@ -579,6 +785,10 @@
             document.querySelector('.app-container').style.display = 'block';
             document.getElementById('print-container').style.display = 'none';
         }
+
+        // INIT
+        // If there are records, load them immediately but keep tab 1 active
+        loadRecords();
     </script>
 </body>
 </html>
