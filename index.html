@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APF MT Section Documents & Records</title>
+    <title>APF MT Section Documents & Records (Excel Layout)</title>
     <style>
         :root { --primary: #0056b3; --bg: #f0f2f5; }
         body { font-family: 'Kalimati', 'Mangal', 'Arial', sans-serif; margin: 0; padding: 20px; background-color: var(--bg); }
@@ -49,7 +49,7 @@
         .print-view { display: none; width: 210mm; min-height: 297mm; margin: 0 auto; font-family: 'Arial', sans-serif; background: white; padding: 20px; box-sizing: border-box; }
         .print-view.active { display: block; }
         
-        /* Print Styles strictly matching APF Photos */
+        /* Print Styles matching Excel */
         @media print {
             body { background: white; padding: 0; margin: 0; }
             .no-print, .app-container { display: none !important; }
@@ -64,8 +64,8 @@
             
             .header-text { text-align: center; margin-bottom: 15px; line-height: 1.3; }
             .header-text h3, .header-text h4, .header-text h5 { margin: 2px 0; font-weight: normal; color: #000; }
-            .header-text h3 { font-weight: bold; font-size: 15px; text-decoration: underline; margin-top: 10px; }
-            .header-text h5 { font-size: 13px; font-weight: bold; }
+            .header-text h3 { font-weight: bold; font-size: 15px; margin-top: 10px; }
+            .header-text h5 { font-size: 13px; }
             
             .meta-info { display: flex; justify-content: space-between; font-size: 12px; line-height: 1.5; margin-bottom: 5px; }
             .signatures { display: flex; justify-content: space-between; margin-top: 40px; font-size: 12px; }
@@ -73,9 +73,7 @@
             
             .note-box { font-size: 11px; border: 1px solid #000; padding: 4px; margin-top: 5px; }
             
-            .table-est th { text-align: center; font-size: 11px; }
-            .table-maag th { text-align: center; font-size: 12px; }
-            .table-sam th { text-align: center; font-size: 11px; }
+            .table-est th, .table-maag th, .table-sam th { text-align: center; font-size: 11px; }
             .v-align-top { vertical-align: top; }
         }
     </style>
@@ -83,22 +81,24 @@
 <body>
 
     <div class="app-container no-print" id="main-ui">
-        <h2>APF MT Section - Document & Record Management System</h2>
+        <h2>APF MT Section - Document Generator (Excel Aligned)</h2>
         
         <div class="tab-nav">
             <button class="tab-btn active" id="btn-tab-new" onclick="switchTab('tab-new', this)">📝 मर्मत फारम (Job Entry)</button>
-            <button class="tab-btn" id="btn-tab-records" onclick="switchTab('tab-records', this)">📊 रेकर्ड र रिपोर्ट (Records & Reports)</button>
+            <button class="tab-btn" id="btn-tab-records" onclick="switchTab('tab-records', this)">📊 रेकर्ड र रिपोर्ट</button>
         </div>
 
-        <!-- TAB 1: NEW ENTRY / DOCUMENT GENERATOR -->
         <div id="tab-new" class="tab-content active">
             <fieldset>
                 <legend>सवारी साधनको विवरण (Vehicle Info)</legend>
                 <input type="hidden" id="edit_id" value="">
                 <div class="form-grid">
-                    <div class="form-group"><label>Vehicle No:</label><input type="text" id="v_no" value="BAGMATI B AA 5720"></div>
-                    <div class="form-group"><label>User:</label><input type="text" id="v_user" value="Honorable Home Minister Escorts"></div>
-                    <div class="form-group"><label>Vehicle Type:</label><input type="text" id="v_type" value="Mahindra Scorpio Pickup S10"></div>
+                    <div class="form-group"><label>सवारी साधन / सम्पत्तिको नाम:</label><input type="text" id="v_type" value="Mahindra Scorpio Pickup S10"></div>
+                    <div class="form-group"><label>सङ्केत / पहिचान नं. (Vehicle No):</label><input type="text" id="v_no" value="BAGMATI B AA 5720"></div>
+                    <div class="form-group"><label>प्रयोगकर्ता (User):</label><input type="text" id="v_user" value="Honorable Home Minister Escorts"></div>
+                    <div class="form-group"><label>स्पेसिफिकेशन:</label><input type="text" id="v_spec" value=""></div>
+                    <div class="form-group"><label>मोडल:</label><input type="text" id="v_model" value=""></div>
+                    <div class="form-group"><label>सम्पत्तिको मूल्य:</label><input type="text" id="v_price" value=""></div>
                     <div class="form-group"><label>Current Mileage:</label><input type="text" id="v_mileage" value="66112"></div>
                     <div class="form-group"><label>Prev Servicing Mileage:</label><input type="text" id="v_prev_mil" value="65602"></div>
                     <div class="form-group"><label>Prev Servicing Date:</label><input type="text" id="v_prev_date" value="2083/01/15"></div>
@@ -108,29 +108,30 @@
             </fieldset>
 
             <fieldset>
-                <legend>मर्मत सम्बन्धी अन्य विवरण (For Maag & Sampanna)</legend>
+                <legend>मर्मत सम्बन्धी अन्य विवरण</legend>
                 <div class="form-grid">
                     <div class="form-group"><label>कार्यालय कोड नं.:</label><input type="text" id="o_code" value=""></div>
-                    <div class="form-group"><label>माग नं.:</label><input type="text" id="maag_no" value=""></div>
-                    <div class="form-group"><label>मर्मत आवेदन/आदेश फारम नं.:</label><input type="text" id="app_no" value=""></div>
-                    <div class="form-group"><label>मर्मत गर्ने फर्मको नाम:</label><input type="text" id="firm_name" value="श्री मोटर ट्रेडिङ्ग कम्पनि प्रा.लि. काठमाण्डौं"></div>
-                    <div class="form-group"><label>मर्मत आवेदन कर्ताको नाम:</label><input type="text" id="applicant" value=""></div>
+                    <div class="form-group"><label>माग फाराम नं.:</label><input type="text" id="maag_no" value=""></div>
+                    <div class="form-group"><label>मर्मत आवेदन तथा आदेश फाराम नं.:</label><input type="text" id="app_no" value=""></div>
+                    <div class="form-group"><label>मर्मत सम्पन्न नं.:</label><input type="text" id="sampanna_no" value=""></div>
+                    <div class="form-group"><label>मर्मत गर्ने व्यक्ति वा फर्मको नाम:</label><input type="text" id="firm_name" value="श्री मोटर ट्रेडिङ्ग कम्पनि प्रा.लि."></div>
+                    <div class="form-group"><label>मर्मत आवेदनकर्ताको नाम:</label><input type="text" id="applicant" value=""></div>
                 </div>
             </fieldset>
 
             <fieldset>
-                <legend>प्राविधिक समिति / पदाधिकारीहरु (Technical Committee for Estimate)</legend>
+                <legend>प्राविधिक समिति / पदाधिकारीहरु (Estimate)</legend>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>१. अध्यक्ष (Chairperson):</label>
+                        <label>१. अध्यक्ष:</label>
                         <input type="text" id="samiti_1" value="प्रा.स.प्र.नि ई. गणेश रावल">
                     </div>
                     <div class="form-group">
-                        <label>२. सदस्य (Member):</label>
+                        <label>२. सदस्य:</label>
                         <input type="text" id="samiti_2" value="प्रा.स.प्र.स.ह बिर बहादुर तामाङ्ग">
                     </div>
                     <div class="form-group">
-                        <label>३. सदस्य (चालक) (Driver):</label>
+                        <label>३. सदस्य:</label>
                         <input type="text" id="samiti_3" value="स.प्र.ब.ह लिला बहादुर राना (सवारी चालक)">
                     </div>
                 </div>
@@ -142,11 +143,12 @@
                     <thead>
                         <tr>
                             <th style="width: 5%">S.N</th>
-                            <th style="width: 35%">Particulars (सामानको नाम)</th>
-                            <th style="width: 10%">Qty (परिमाण)</th>
-                            <th style="width: 10%">Unit (एकाइ)</th>
+                            <th style="width: 25%">सामानको नाम</th>
+                            <th style="width: 10%">Qty</th>
+                            <th style="width: 10%">Unit</th>
                             <th style="width: 15%">Tender Rate</th>
                             <th style="width: 15%">Approx Rate</th>
+                            <th style="width: 10%">अन्य खर्च (रकम)</th>
                             <th style="width: 10%">Action</th>
                         </tr>
                     </thead>
@@ -158,7 +160,8 @@
                             <td><input type="text" class="i-unit" value="set"></td>
                             <td><input type="number" class="i-trate" value="12000"></td>
                             <td><input type="number" class="i-arate" value=""></td>
-                            <td></td>
+                            <td><input type="number" class="i-other-cost" value="0"></td>
+                            <td><button onclick="this.closest('tr').remove()" style="color:red; background:none; border:none; font-size:18px; cursor:pointer;">✖</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -166,52 +169,50 @@
             </fieldset>
 
             <div class="btn-group" style="background:#e9ecef; padding: 20px; border-radius: 8px;">
-                <button class="btn btn-save" onclick="saveRecord()">💾 सेभ गर्नुहोस (Save Job)</button>
+                <button class="btn btn-save" onclick="saveRecord()">💾 सेभ गर्नुहोस (Save)</button>
                 <div style="border-left: 2px solid #ccc; margin: 0 10px;"></div>
-                <button class="btn btn-est" onclick="generateDoc('estimate')">📄 १. Estimate प्रिन्ट</button>
-                <button class="btn btn-maag" onclick="generateDoc('maag')">📝 २. माग फारम प्रिन्ट</button>
-                <button class="btn btn-sampanna" onclick="generateDoc('sampanna')">✅ ३. मर्मत सम्पन्न प्रिन्ट</button>
+                <button class="btn btn-est" onclick="generateDoc('estimate')">📄 १. Estimate</button>
+                <button class="btn btn-maag" onclick="generateDoc('maag')">📝 २. माग फारम (४०१)</button>
+                <button class="btn btn-sampanna" onclick="generateDoc('sampanna')">✅ ३. मर्मत सम्पन्न (४१४क)</button>
             </div>
         </div>
 
-        <!-- TAB 2: RECORDS & REPORTS -->
         <div id="tab-records" class="tab-content">
             <div class="report-summary">
-                <div>जम्मा मर्मत संख्या (Total Jobs): <br><span id="rep-count">0</span></div>
-                <div>कुल खर्च रकम (Total Expense with VAT): <br>रु <span id="rep-expense">0.00</span></div>
+                <div>जम्मा मर्मत संख्या: <br><span id="rep-count">0</span></div>
+                <div>कुल खर्च रकम: <br>रु <span id="rep-expense">0.00</span></div>
             </div>
             
             <div style="display:flex; justify-content:space-between; margin-bottom: 10px; align-items:center;">
-                <h3 style="margin:0; color:var(--primary);">सुरक्षित रेकर्डहरु (Saved Records)</h3>
-                <button class="btn" style="background:#28a745; font-size:14px; padding: 8px 15px;" onclick="exportToCSV()">📥 Excel/CSV डाउनलोड</button>
+                <h3 style="margin:0; color:var(--primary);">सुरक्षित रेकर्डहरु</h3>
+                <button class="btn" style="background:#28a745; font-size:14px; padding: 8px 15px;" onclick="exportToCSV()">📥 CSV डाउनलोड</button>
             </div>
             
             <table class="entry-table" id="recordsTable">
                 <thead>
                     <tr>
-                        <th>मिति (Date)</th>
-                        <th>सवारी नं. (Vehicle No)</th>
+                        <th>मिति</th>
+                        <th>पहिचान नं.</th>
                         <th>आर्थिक वर्ष</th>
                         <th>मर्मत गर्ने फर्म</th>
-                        <th>जम्मा लागत (Total Amount)</th>
+                        <th>जम्मा लागत</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="recordsBody">
-                    <!-- Records will be loaded here -->
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- PRINT CONTAINER (Same as before) -->
+    <!-- PRINT CONTAINER -->
     <div id="print-container">
         <div style="text-align:center; padding: 20px;" class="no-print">
-            <button class="btn btn-print" id="doPrintBtn" style="display:inline-block;" onclick="window.print()">🖨️ प्रिन्ट गर्नुहोस (Print)</button>
-            <button class="btn btn-print" id="backBtn" style="display:inline-block; background:#dc3545;" onclick="closePrint()">❌ पछाडि (Back)</button>
+            <button class="btn btn-print" id="doPrintBtn" style="display:inline-block;" onclick="window.print()">🖨️ प्रिन्ट गर्नुहोस</button>
+            <button class="btn btn-print" id="backBtn" style="display:inline-block; background:#dc3545;" onclick="closePrint()">❌ पछाडि</button>
         </div>
 
-        <!-- 1. ESTIMATE -->
+        <!-- 1. ESTIMATE (Keeping the APF Custom Format) -->
         <div id="tpl-estimate" class="print-view">
             <div class="header-text">
                 <h5>Government of Nepal</h5>
@@ -245,7 +246,7 @@
                     </tr>
                     <tr>
                         <th style="width:12%">Tender Rate</th>
-                        <th style="width:12%">Approx.<br>Estimated Rate</th>
+                        <th style="width:12%">Approx. Estimated Rate</th>
                     </tr>
                 </thead>
                 <tbody id="est-body"></tbody>
@@ -286,7 +287,7 @@
             </div>
         </div>
 
-        <!-- 2. MAAG FARAM -->
+        <!-- 2. MAAG FARAM (Excel 401 Layout) -->
         <div id="tpl-maag" class="print-view">
             <div class="meta-info" style="margin-bottom:0;">
                 <div></div>
@@ -294,30 +295,34 @@
             </div>
             <div class="header-text" style="margin-top:0;">
                 <h5>नेपाल सरकार</h5>
-                <h5>गृह मन्त्रालय</h5>
-                <h5>श्री सशस्त्र प्रहरी बल, नेपाल प्रधान कार्यालय मद्दती तथा सेवा निर्देशनालय</h5>
-                <h3>माग फारम</h3>
+                <h5>गृह मन्त्रालय, श्री सशस्त्र प्रहरी बल, नेपाल प्रधान कार्यालय मद्दती तथा सेवा निर्देशनालय</h5>
+                <h5 style="font-weight:normal;">कार्यालय कोड नं.: <span class="d-ocode"></span></h5>
+                <h3>माग फाराम</h3>
             </div>
             <div class="meta-info" style="margin-top:-10px;">
                 <div style="width:60%">
+                    <!-- Additional APF fields kept for reference -->
                     सवारी साधन नं. : <span class="d-vno"></span><br>
                     प्रयोगकर्ता : <span class="d-user"></span>
                 </div>
                 <div class="text-right" style="text-align:left;">
                     आर्थिक वर्ष : <span class="d-fy"></span><br>
-                    माग नं. : <span class="d-maag"></span><br>
-                    मिति : <span class="d-date"></span>
+                    माग फाराम नं: <span class="d-maag"></span><br>
+                    मितिः <span class="d-date"></span>
                 </div>
             </div>
             <table class="table-maag">
                 <thead>
                     <tr>
-                        <th style="width:5%">क्र.सं.</th>
-                        <th style="width:40%">सामानको नाम</th>
-                        <th style="width:15%">स्पेसिफिकेसन</th>
+                        <th rowspan="2" style="width:6%">क्र.सं.</th>
+                        <th rowspan="2" style="width:40%">सामानको नाम</th>
+                        <th rowspan="2" style="width:18%">स्पेसिफिकेसन</th>
+                        <th colspan="2">माग गरिएको</th>
+                        <th rowspan="2" style="width:16%">कैफियत</th>
+                    </tr>
+                    <tr>
                         <th style="width:10%">एकाइ</th>
-                        <th style="width:15%">माग गरिएको परिमाण</th>
-                        <th style="width:15%">कैफियत</th>
+                        <th style="width:10%">परिमाण</th>
                     </tr>
                     <tr>
                         <th>१</th><th>२</th><th>३</th><th>४</th><th>५</th><th>६</th>
@@ -328,119 +333,109 @@
             
             <div style="margin-top:40px; display:flex; justify-content:space-between; font-size:12px;">
                 <div class="sig-block text-left v-align-top">
-                    माग गर्ने:....<br><br>
-                    नाम: <span class="d-applicant"></span><br><br>
-                    पद: <br><br>
-                    मिति: <span class="d-date"></span><br><br>
+                    माग गर्नेको दस्तखत:....<br>
+                    नाम: <span class="d-applicant"></span><br>
+                    मिति: <span class="d-date"></span><br>
                     प्रयोजन:
                 </div>
                 <div class="sig-block text-left v-align-top">
-                    सिफारिस गर्ने:....<br><br>
-                    नाम:<br><br>
-                    पद:<br><br>
+                    सिफारिस गर्नेको दस्तखत:....<br>
+                    नाम:<br>
                     मिति: <span class="d-date"></span>
                 </div>
                 <div class="sig-block text-left v-align-top">
-                    स्वीकृत गर्ने:....<br><br>
-                    नाम:<br><br>
-                    पद:<br><br>
+                    स्वीकृत गर्नेको दस्तखत:....<br>
+                    नाम:<br>
                     मिति: <span class="d-date"></span>
-                </div>
-            </div>
-            <div style="border: 1px solid #000; padding: 10px; margin-top: 30px; font-size: 12px; display:flex;">
-                <div style="width:50%">
-                    स्टोरकिपरले भर्ने<br>
-                    क) बजारबाट खरिद गर्नु पर्ने <span style="display:inline-block; width:15px; height:15px; border:1px solid #000; margin-left:5px;"></span><br>
-                    ख) मौज्दातमा रहेको <span style="display:inline-block; width:15px; height:15px; border:1px solid #000; margin-left:5px;"></span>
-                </div>
-                <div style="width:50%">
-                    <br>
-                    स्टोरकिपरको दस्तखत :...................<br>
-                    नाम:
                 </div>
             </div>
         </div>
 
-        <!-- 3. SAMPANNA -->
+        <!-- 3. SAMPANNA (Excel 414क Layout) -->
         <div id="tpl-sampanna" class="print-view">
             <div class="meta-info" style="margin-bottom:0;">
                 <div></div>
-                <div class="text-right">म.ले.प. फारम नं. ४१४ क</div>
+                <div class="text-right">म.ले.प. फाराम नं. ४१४क</div>
             </div>
             <div class="header-text" style="margin-top:0;">
                 <h5>नेपाल सरकार</h5>
-                <h5>गृह मन्त्रालय</h5>
-                <h5>श्री सशस्त्र प्रहरी बल नेपाल प्रधान कार्यालय मद्दती तथा सेवा निर्देशनालय</h5>
-                <h5>कार्यालय कोड नं. : <span class="d-ocode"></span></h5>
-                <h3>मर्मत सम्पन्न फारम</h3>
+                <h5>गृह मन्त्रालय, श्री सशस्त्र प्रहरी बल, नेपाल प्रधान कार्यालय मद्दती तथा सेवा निर्देशनालय</h5>
+                <h5 style="font-weight:normal;">कार्यालय कोड नं. : <span class="d-ocode"></span></h5>
+                <h3>मर्मत सम्पन्न फाराम</h3>
             </div>
             <div class="meta-info" style="margin-top:-10px;">
                 <div style="width:50%">
                     सम्पत्तिको नाम: <span class="d-vtype"></span><br>
+                    सङ्केत नं.: <span class="d-vno"></span><br>
                     पहिचान नं.: <span class="d-vno"></span><br>
-                    स्पेसिफिकेसन :<br>
-                    मोडल :
+                    स्पेसिफिकेशन: <span class="d-spec"></span><br>
+                    मोडल: <span class="d-model"></span><br>
+                    सम्पत्तिको मूल्य: <span class="d-price"></span>
                 </div>
                 <div class="text-right" style="text-align:left;">
                     आर्थिक वर्ष: <span class="d-fy"></span><br>
-                    मर्मत आवेदन तथा आदेश फारम नं.: <span class="d-appno"></span><br>
                     मिति: <span class="d-date"></span><br>
-                    मर्मत गर्ने व्यक्ति वा फर्मको नाम : <span class="d-firm"></span><br>
-                    मर्मत आवेदन कर्ताको नाम: <span class="d-applicant"></span>
+                    मर्मत आवेदन तथा आदेश फाराम नं.: <span class="d-appno"></span><br>
+                    मर्मत मर्मत सम्पन्न नं.: <span class="d-sampannano"></span><br>
+                    मर्मत गर्ने व्यक्ति वा फर्मको नाम: <span class="d-firm"></span><br>
+                    मर्मत आवेदनकर्ताको नाम: <span class="d-applicant"></span>
                 </div>
             </div>
             <table class="table-sam">
                 <thead>
                     <tr>
-                        <th rowspan="2" style="width:6%">मिति</th>
+                        <th rowspan="2" style="width:5%">क्र.सं.</th>
                         <th colspan="5">मर्मत गर्दा फेरिएको विवरण</th>
-                        <th rowspan="2" style="width:8%">मर्मत गर्दाको अन्य खर्च रकम</th>
-                        <th rowspan="2" style="width:10%">जम्मा रकम (६+७)</th>
+                        <th colspan="2">मर्मत गर्दाको अन्य खर्च</th>
+                        <th rowspan="2" style="width:8%">जम्मा रकम</th>
                         <th rowspan="2" style="width:8%">मू.अ.कर रकम</th>
-                        <th rowspan="2" style="width:10%">जम्मा लागत (८+९)</th>
+                        <th rowspan="2" style="width:9%">जम्मा लागत</th>
                         <th rowspan="2" style="width:8%">कैफियत</th>
                     </tr>
                     <tr>
-                        <th style="width:25%">सामानको नाम</th>
-                        <th style="width:5%">एकाइ</th>
-                        <th style="width:5%">परिमाण</th>
+                        <th style="width:20%">सामानको नाम</th>
+                        <th style="width:6%">एकाई</th>
+                        <th style="width:6%">परिमाण</th>
                         <th style="width:7%">दर</th>
-                        <th style="width:8%">जम्मा (४x५)</th>
+                        <th style="width:8%">जम्मा</th>
+                        <th style="width:10%">विवरण</th>
+                        <th style="width:7%">रकम</th>
                     </tr>
                     <tr>
-                        <th>१</th><th>२</th><th>३</th><th>४</th><th>५</th><th>६</th><th>७</th><th>८</th><th>९</th><th>१०</th><th>११</th>
+                        <th>१</th><th>२</th><th>३</th><th>४</th><th>५</th><th>६=४x५</th><th>७</th><th>८</th><th>९=६+८</th><th>१०</th><th>११=९+१०</th><th>१२</th>
                     </tr>
                 </thead>
                 <tbody id="sam-body"></tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="5" class="text-right" style="font-weight:bold; padding-right:10px;">कुल जम्मा रकम :</td>
+                        <td colspan="6" class="text-right" style="font-weight:bold; padding-right:10px;">कुल जम्मा :</td>
                         <td id="sam-t6" class="text-right">0.00</td>
                         <td></td>
                         <td id="sam-t8" class="text-right">0.00</td>
                         <td id="sam-t9" class="text-right">0.00</td>
                         <td id="sam-t10" class="text-right" style="font-weight:bold;">0.00</td>
+                        <td id="sam-t11" class="text-right" style="font-weight:bold;">0.00</td>
                         <td></td>
                     </tr>
                 </tfoot>
             </table>
             <div style="margin-top:40px; display:flex; justify-content:space-between; font-size:12px;">
                 <div class="sig-block text-left">
-                    तयार गर्ने:....<br><br>
-                    नाम: <span id="d-sam-t1"></span><br><br>
-                    दर्जा: प्रा.स.प्र.नि<br><br>
+                    तयार गर्ने:....<br>
+                    नाम: <span id="d-sam-t1"></span><br>
+                    दर्जा: प्रा.स.प्र.नि<br>
                     मिति: <span class="d-date"></span>
                 </div>
                 <div class="sig-block text-left">
-                    सिफारिस गर्ने:....<br><br>
-                    नाम:<br><br>
-                    दर्जा:<br><br>
+                    सिफारिस गर्ने:....<br>
+                    नाम:<br>
+                    दर्जा:<br>
                     मिति: <span class="d-date"></span>
                 </div>
                 <div class="sig-block text-left">
-                    स्वीकृत गर्ने:....<br><br>
-                    नाम:<br><br>
-                    दर्जा:<br><br>
+                    स्वीकृत गर्ने:....<br>
+                    नाम:<br>
+                    दर्जा:<br>
                     मिति: <span class="d-date"></span>
                 </div>
             </div>
@@ -473,6 +468,7 @@
                 <td><input type="text" class="i-unit"></td>
                 <td><input type="number" class="i-trate"></td>
                 <td><input type="number" class="i-arate"></td>
+                <td><input type="number" class="i-other-cost" value="0"></td>
                 <td><button onclick="this.closest('tr').remove()" style="color:red; background:none; border:none; font-size:18px; cursor:pointer;">✖</button></td>
             `;
             document.getElementById('entryBody').appendChild(tr);
@@ -488,13 +484,16 @@
                     const qty = parseFloat(tr.querySelector('.i-qty').value) || 0;
                     const trate = tr.querySelector('.i-trate').value;
                     const arate = tr.querySelector('.i-arate').value;
-                    const activeRate = parseFloat(trate) || parseFloat(arate) || 0;
+                    const otherCost = parseFloat(tr.querySelector('.i-other-cost').value) || 0;
                     
-                    totalWithoutVat += (qty * activeRate);
+                    const activeRate = parseFloat(trate) || parseFloat(arate) || 0;
+                    const itemTotal = (qty * activeRate) + otherCost;
+                    
+                    totalWithoutVat += itemTotal;
 
                     items.push({
                         desc: desc, unit: tr.querySelector('.i-unit').value,
-                        qty: qty, trate: trate, arate: arate
+                        qty: qty, trate: trate, arate: arate, otherCost: otherCost
                     });
                 }
             });
@@ -504,6 +503,9 @@
                 vno: document.getElementById('v_no').value,
                 user: document.getElementById('v_user').value,
                 vtype: document.getElementById('v_type').value,
+                spec: document.getElementById('v_spec').value,
+                model: document.getElementById('v_model').value,
+                price: document.getElementById('v_price').value,
                 mileage: document.getElementById('v_mileage').value,
                 pmil: document.getElementById('v_prev_mil').value,
                 pdate: document.getElementById('v_prev_date').value,
@@ -512,6 +514,7 @@
                 ocode: document.getElementById('o_code').value,
                 maag: document.getElementById('maag_no').value,
                 appno: document.getElementById('app_no').value,
+                sampannano: document.getElementById('sampanna_no').value,
                 firm: document.getElementById('firm_name').value,
                 applicant: document.getElementById('applicant').value,
                 sam1: document.getElementById('samiti_1').value,
@@ -530,9 +533,8 @@
                 return;
             }
 
-            let records = JSON.parse(localStorage.getItem('apf_records') || '[]');
+            let records = JSON.parse(localStorage.getItem('apf_records_v2') || '[]');
             
-            // Check if updating existing or adding new
             const existingIndex = records.findIndex(r => r.id === data.id);
             if(existingIndex > -1) {
                 records[existingIndex] = data;
@@ -540,22 +542,20 @@
                 records.push(data);
             }
 
-            localStorage.setItem('apf_records', JSON.stringify(records));
-            document.getElementById('edit_id').value = ''; // clear edit mode
-            alert('रेकर्ड सफलता पुर्वक सुरक्षित भयो! (Record Saved Successfully)');
+            localStorage.setItem('apf_records_v2', JSON.stringify(records));
+            document.getElementById('edit_id').value = ''; 
+            alert('रेकर्ड सफलता पुर्वक सुरक्षित भयो!');
             
-            // Automatically switch to records tab to see it
             switchTab('tab-records', document.getElementById('btn-tab-records'));
         }
 
         function loadRecords() {
-            let records = JSON.parse(localStorage.getItem('apf_records') || '[]');
+            let records = JSON.parse(localStorage.getItem('apf_records_v2') || '[]');
             const tbody = document.getElementById('recordsBody');
             tbody.innerHTML = '';
             
             let totalExpense = 0;
             
-            // Sort by newest first
             records.reverse().forEach((rec) => {
                 totalExpense += parseFloat(rec.total_amount) || 0;
                 
@@ -566,8 +566,8 @@
                     <td>${rec.firm || '-'}</td>
                     <td class="text-right" style="color:var(--primary); font-weight:bold;">रु ${(parseFloat(rec.total_amount)||0).toFixed(2)}</td>
                     <td>
-                        <button onclick="viewRecord('${rec.id}')" style="background:#007bff; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer;">खोल्नुहोस् (Open)</button>
-                        <button onclick="deleteRecord('${rec.id}')" style="background:#dc3545; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer; margin-left:5px;">मेट्नुहोस् (Del)</button>
+                        <button onclick="viewRecord('${rec.id}')" style="background:#007bff; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer;">Open</button>
+                        <button onclick="deleteRecord('${rec.id}')" style="background:#dc3545; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer; margin-left:5px;">Del</button>
                     </td>
                 </tr>`;
             });
@@ -577,16 +577,16 @@
         }
 
         function deleteRecord(id) {
-            if(confirm('के तपाई यो रेकर्ड मेट्न निश्चित हुनुहुन्छ? (Are you sure you want to delete this record?)')) {
-                let records = JSON.parse(localStorage.getItem('apf_records') || '[]');
+            if(confirm('के तपाई यो रेकर्ड मेट्न निश्चित हुनुहुन्छ?')) {
+                let records = JSON.parse(localStorage.getItem('apf_records_v2') || '[]');
                 records = records.filter(r => r.id !== id);
-                localStorage.setItem('apf_records', JSON.stringify(records));
+                localStorage.setItem('apf_records_v2', JSON.stringify(records));
                 loadRecords();
             }
         }
 
         function viewRecord(id) {
-            let records = JSON.parse(localStorage.getItem('apf_records') || '[]');
+            let records = JSON.parse(localStorage.getItem('apf_records_v2') || '[]');
             let rec = records.find(r => r.id === id);
             
             if(rec) {
@@ -594,6 +594,9 @@
                 document.getElementById('v_no').value = rec.vno || '';
                 document.getElementById('v_user').value = rec.user || '';
                 document.getElementById('v_type').value = rec.vtype || '';
+                document.getElementById('v_spec').value = rec.spec || '';
+                document.getElementById('v_model').value = rec.model || '';
+                document.getElementById('v_price').value = rec.price || '';
                 document.getElementById('v_mileage').value = rec.mileage || '';
                 document.getElementById('v_prev_mil').value = rec.pmil || '';
                 document.getElementById('v_prev_date').value = rec.pdate || '';
@@ -602,13 +605,13 @@
                 document.getElementById('o_code').value = rec.ocode || '';
                 document.getElementById('maag_no').value = rec.maag || '';
                 document.getElementById('app_no').value = rec.appno || '';
+                document.getElementById('sampanna_no').value = rec.sampannano || '';
                 document.getElementById('firm_name').value = rec.firm || '';
                 document.getElementById('applicant').value = rec.applicant || '';
                 document.getElementById('samiti_1').value = rec.sam1 || '';
                 document.getElementById('samiti_2').value = rec.sam2 || '';
                 document.getElementById('samiti_3').value = rec.sam3 || '';
                 
-                // Clear and load items
                 const tbody = document.getElementById('entryBody');
                 tbody.innerHTML = '';
                 
@@ -622,40 +625,30 @@
                             <td><input type="text" class="i-unit" value="${item.unit}"></td>
                             <td><input type="number" class="i-trate" value="${item.trate}"></td>
                             <td><input type="number" class="i-arate" value="${item.arate}"></td>
+                            <td><input type="number" class="i-other-cost" value="${item.otherCost || 0}"></td>
                             <td><button onclick="this.closest('tr').remove()" style="color:red; background:none; border:none; font-size:18px; cursor:pointer;">✖</button></td>
                         `;
                         tbody.appendChild(tr);
                     });
                 } else {
-                    addRow(); // add blank row if empty
+                    addRow();
                 }
-                
-                // Switch to form tab
                 switchTab('tab-new', document.getElementById('btn-tab-new'));
             }
         }
 
         function exportToCSV() {
-            let records = JSON.parse(localStorage.getItem('apf_records') || '[]');
-            if(records.length === 0) {
-                alert("कुनै रेकर्ड फेला परेन! (No records to export)");
-                return;
-            }
+            let records = JSON.parse(localStorage.getItem('apf_records_v2') || '[]');
+            if(records.length === 0) return alert("कुनै रेकर्ड फेला परेन!");
 
-            // CSV Header
-            let csvContent = "data:text/csv;charset=utf-8,\\uFEFF"; // BOM for UTF-8 support (Nepali characters)
-            csvContent += "Date,Vehicle No,Vehicle Type,Fiscal Year,Firm Name,Total Amount (with VAT)\\n";
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
+            csvContent += "Date,Vehicle No,Vehicle Type,Fiscal Year,Firm Name,Total Amount (with VAT)\n";
             
             records.forEach(function(rec) {
                 let row = [
-                    rec.date, 
-                    rec.vno, 
-                    rec.vtype, 
-                    rec.fy, 
-                    `"${rec.firm || ''}"`, // Quotes to handle commas in firm name
-                    (parseFloat(rec.total_amount) || 0).toFixed(2)
+                    rec.date, rec.vno, rec.vtype, rec.fy, `"${rec.firm || ''}"`, (parseFloat(rec.total_amount) || 0).toFixed(2)
                 ];
-                csvContent += row.join(",") + "\\n";
+                csvContent += row.join(",") + "\n";
             });
             
             var encodedUri = encodeURI(csvContent);
@@ -672,6 +665,9 @@
             document.querySelectorAll('.d-vno').forEach(el => el.innerText = data.vno);
             document.querySelectorAll('.d-user').forEach(el => el.innerText = data.user);
             document.querySelectorAll('.d-vtype').forEach(el => el.innerText = data.vtype);
+            document.querySelectorAll('.d-spec').forEach(el => el.innerText = data.spec);
+            document.querySelectorAll('.d-model').forEach(el => el.innerText = data.model);
+            document.querySelectorAll('.d-price').forEach(el => el.innerText = data.price);
             document.querySelectorAll('.d-mileage').forEach(el => el.innerText = data.mileage);
             document.querySelectorAll('.d-pmil').forEach(el => el.innerText = data.pmil);
             document.querySelectorAll('.d-pdate').forEach(el => el.innerText = data.pdate);
@@ -680,6 +676,7 @@
             document.querySelectorAll('.d-ocode').forEach(el => el.innerText = data.ocode);
             document.querySelectorAll('.d-maag').forEach(el => el.innerText = data.maag);
             document.querySelectorAll('.d-appno').forEach(el => el.innerText = data.appno);
+            document.querySelectorAll('.d-sampannano').forEach(el => el.innerText = data.sampannano);
             document.querySelectorAll('.d-firm').forEach(el => el.innerText = data.firm);
             document.querySelectorAll('.d-applicant').forEach(el => el.innerText = data.applicant);
             
@@ -691,10 +688,7 @@
 
         function generateDoc(type) {
             const data = getData();
-            if(data.items.length === 0) {
-                alert("प्रिन्ट गर्नको लागि कृपया सामानको विवरण भर्नुहोस्!");
-                return;
-            }
+            if(data.items.length === 0) return alert("प्रिन्ट गर्नको लागि कृपया सामानको विवरण भर्नुहोस्!");
 
             fillMeta(data);
             
@@ -703,6 +697,9 @@
             document.querySelectorAll('.print-view').forEach(el => el.classList.remove('active'));
             
             let total = 0;
+            let sum_amt_6 = 0;
+            let sum_other_8 = 0;
+            let sum_total_9 = 0;
             
             if(type === 'estimate') {
                 document.getElementById('tpl-estimate').classList.add('active');
@@ -710,7 +707,7 @@
                 tbody.innerHTML = '';
                 data.items.forEach((item, idx) => {
                     const activeRate = parseFloat(item.trate) || parseFloat(item.arate) || 0;
-                    const amt = item.qty * activeRate;
+                    const amt = (item.qty * activeRate) + parseFloat(item.otherCost||0);
                     total += amt;
                     
                     const trateDisplay = item.trate ? parseFloat(item.trate).toFixed(2) : '';
@@ -754,30 +751,42 @@
                 tbody.innerHTML = '';
                 data.items.forEach((item, idx) => {
                     const activeRate = parseFloat(item.trate) || parseFloat(item.arate) || 0;
-                    const amt = item.qty * activeRate;
-                    total += amt;
+                    const amt_6 = item.qty * activeRate;
+                    const other_8 = parseFloat(item.otherCost) || 0;
+                    const row_total_9 = amt_6 + other_8;
+                    const vat_10 = row_total_9 * 0.13;
+                    const grand_11 = row_total_9 + vat_10;
+                    
+                    sum_amt_6 += amt_6;
+                    sum_other_8 += other_8;
+                    sum_total_9 += row_total_9;
+
                     tbody.innerHTML += `<tr>
-                        <td class="text-center">${idx===0 ? data.date : ''}</td>
+                        <td class="text-center">${idx+1}</td>
                         <td>${item.desc}</td>
                         <td class="text-center">${item.unit}</td>
                         <td class="text-center">${item.qty}</td>
                         <td class="text-right">${activeRate.toFixed(2)}</td>
-                        <td class="text-right">${amt.toFixed(2)}</td>
+                        <td class="text-right">${amt_6.toFixed(2)}</td>
                         <td></td>
-                        <td class="text-right">${amt.toFixed(2)}</td>
-                        <td class="text-right">${(amt * 0.13).toFixed(2)}</td>
-                        <td class="text-right">${(amt * 1.13).toFixed(2)}</td>
+                        <td class="text-right">${other_8 > 0 ? other_8.toFixed(2) : ''}</td>
+                        <td class="text-right">${row_total_9.toFixed(2)}</td>
+                        <td class="text-right">${vat_10.toFixed(2)}</td>
+                        <td class="text-right">${grand_11.toFixed(2)}</td>
                         <td></td>
                     </tr>`;
                 });
+                
+                // Add empty padding rows to match exactly 6 rows if less
                 for(let i=data.items.length+1; i<=6; i++) {
-                     tbody.innerHTML += `<tr><td style="height:25px;"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+                     tbody.innerHTML += `<tr><td style="height:25px;"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
                 }
                 
-                document.getElementById('sam-t6').innerText = total.toFixed(2);
-                document.getElementById('sam-t8').innerText = total.toFixed(2);
-                document.getElementById('sam-t9').innerText = (total * 0.13).toFixed(2);
-                document.getElementById('sam-t10').innerText = (total * 1.13).toFixed(2);
+                document.getElementById('sam-t6').innerText = sum_amt_6.toFixed(2);
+                document.getElementById('sam-t8').innerText = sum_other_8.toFixed(2);
+                document.getElementById('sam-t9').innerText = sum_total_9.toFixed(2);
+                document.getElementById('sam-t10').innerText = (sum_total_9 * 0.13).toFixed(2);
+                document.getElementById('sam-t11').innerText = (sum_total_9 * 1.13).toFixed(2);
             }
         }
 
@@ -786,8 +795,6 @@
             document.getElementById('print-container').style.display = 'none';
         }
 
-        // INIT
-        // If there are records, load them immediately but keep tab 1 active
         loadRecords();
     </script>
 </body>
